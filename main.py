@@ -34,7 +34,7 @@ class AnkiMdImporter:
 
     def extract_questions(self, markdown_content):
         # Adjust the regex according to your Markdown structure
-        pattern = re.compile(r'- ([\s\S]*?)$\s*\d\.\s(.*?$)\s*\d\.\s(.*?$)\s*\d\.\s(.*?$)\s*\d\.\s(.*?$)\s*- Respuesta: (.*?)$', re.DOTALL | re.MULTILINE)
+        pattern = re.compile(r'- ([\s\S]*?)$\s*\d\.\s(.*?$)\s*\d\.\s(.*?$)\s*\d\.\s(.*?$)\s*\d\.\s(.*?$)\s*- Answer: (.*?)$', re.DOTALL | re.MULTILINE)
         return pattern.findall(markdown_content)
 
     def process_file(self):
