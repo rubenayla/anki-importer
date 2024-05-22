@@ -9,7 +9,7 @@ The `AnkiMdImporter` is a Python script designed to automatically import questio
 - `requests` library
 - Anki installed with [AnkiConnect](https://ankiweb.net/shared/info/2055492159) plugin enabled (listening on port 8765)
     - Code: ``2055492159``
-- Make sure the deck is created, it has at least 1 card already, and the name of the deck matches with the variable ``deck_name``, at the end of the script
+- Make sure the deck is created, it has at least 1 card already, and the variable ``deck_name`` matches with the name of the deck, at the end of the script
 
 ### Questions File Format
 The `AnkiCardImporter` script requires that the questions are present in a file called `questions.md`, formatted as follows:
