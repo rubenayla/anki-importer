@@ -48,4 +48,16 @@ Follow this format:
     - Answer: Correct answer 1, because blablabla
 - Next question...
 ```
+In spanish:
+```text
+Hazme preguntas tipo test con 4 respuestas posibles, para practicar sobre el documento adjunto (en un codeblock, de ahora en adelante todo así). Intenta que sean dificiles, intenta ir a pillar, como en un examen de universidad. Tras las preguntas, pon las explicaciones con sus respuestas. Puedes empezar con 10 preguntas.
 
+Sigue el siguiente formato (en codeblock):
+- Tal cosa es correcta o la otra etc?:
+    1. blablabla
+    2. blablabla
+    3. blablabla
+    4. blablabla
+    - Answer: Respuesta correcta 1, porque blablabla
+- Siguiente pregunta...
+```
