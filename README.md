@@ -34,3 +34,18 @@ Note this:
 2. Install the required Python libraries:
    ```bash
    pip install markdown2 requests
+
+### Prompt to generate the questions
+```text
+Create multiple-choice test questions with 4 possible answers for me to practice on the attached document. Try to make them difficult, aiming to be tricky like a university exam. After the questions, include explanations with their answers. You can start with 10 questions.
+
+Follow this format:
+- Is this thing correct or the other, etc.?:
+    1. blablabla
+    2. blablabla
+    3. blablabla
+    4. blablabla
+    - Answer: Correct answer 1, because blablabla
+- Next question...
+```
+
