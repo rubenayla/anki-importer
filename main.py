@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # Set folder to parent of file and define the deck name
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     file_path = 'questions.md'
-    deck_name = 'test' # Specify your Anki deck name
+    deck_name = 'my_deck' # Specify your Anki deck name
 
     importer = AnkiMdImporter(file_path, deck_name)
     importer.process_file()

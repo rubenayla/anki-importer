@@ -3,6 +3,12 @@
 ## Overview
 The `AnkiMdImporter` is a Python script designed to automatically import questions formatted in Markdown into Anki, a popular flashcard application used for spaced repetition learning. This script parses a Markdown file containing questions and their respective options, converts these questions into Anki cards, and adds them to a specified deck.
 
+## Steps to use
+1. Install the [requirements](#requirements)
+2. Figure out your source of information. Maybe it's a PDF, some text notes, maybe it's common knowledge to the AI so you don't need anything, maybe it's so incredibly long to the AI that you have to split it in pieces... it depends. Once you have it, save the text in a file called `questions.md` in the same directory as the script.
+3. Then make sure your deck is created, has 1 card already (dummy or anything), and the variable `deck_name` matches with the name of the deck, at the end of the script.
+4. Run the script with `python AnkiMdImporter.py` and wait for the cards to be imported into Anki. You should be able to see them appear one by one.
+
 ## Requirements
 - Python 3.x
 - `markdown2` library
