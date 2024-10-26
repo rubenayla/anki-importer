@@ -45,7 +45,7 @@ Note this:
 ```text
 Create multiple-choice test questions with 4 possible answers for me to practice on the attached document. Try to make them difficult, aiming to be tricky like a university exam. After the questions, include explanations with their answers. You can start with 10 questions.
 
-Follow this format:
+Follow this format, EXACTLY, with the dash to indicate the start of the question, no blank lines, no numbers indicating the different questions. Put everything in a codeblock:
 - Is this thing correct or the other, etc.?:
     1. blablabla
     2. blablabla
