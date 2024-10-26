@@ -11,8 +11,9 @@ The `AnkiMdImporter` is a Python script designed to automatically import questio
 
 ## Requirements
 - Python 3.x
-- `markdown2` library
-- `requests` library
+    - `python -m ensurepip --upgrade`
+- `markdown2` and `requests` libraries
+    - `pip install markdown2 requests`
 - Anki installed with [AnkiConnect](https://ankiweb.net/shared/info/2055492159) plugin enabled (listening on port 8765 by default)
     - Code: ``2055492159``
 - Make sure the deck is created, it has at least 1 card already, and the variable ``deck_name`` matches with the name of the deck, at the end of the script
