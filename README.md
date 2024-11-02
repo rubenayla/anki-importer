@@ -38,15 +38,8 @@ Note this:
 - Each option should begin with a number followed by a period
 - The correct answer explanation should start with a dash, followed by the word "Answer:", and the explanation should explain why the answer is correct, in the same line (only one)
 
-## Installation
 
-### Set up Python Environment
-1. Ensure Python 3 is installed on your system.
-2. Install the required Python libraries:
-   ```bash
-   pip install markdown2 requests
-
-### Prompt to generate the questions
+## Prompt to generate the questions
 ```text
 Create multiple-choice test questions with 4 possible answers for me to practice on the attached document. Try to make them difficult, aiming to be tricky like a university exam. After the questions, include explanations with their answers. You can start with 40 questions.
 
