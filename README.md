@@ -4,19 +4,24 @@
 The `AnkiMdImporter` is a Python script designed to automatically import questions formatted in Markdown into Anki, a popular flashcard application used for spaced repetition learning. This script parses a Markdown file containing questions and their respective options, converts these questions into Anki cards, and adds them to a specified deck.
 
 ## Steps to use
-1. Install the [requirements](#requirements)
-2. Figure out your source of information. Maybe it's a PDF, some text notes, maybe it's common knowledge to the AI so you don't need anything, maybe it's so incredibly long to the AI that you have to split it in pieces... it depends. Once you have it, save the text in a file called `questions.md` in the same directory as the script.
-3. Then make sure your deck is created, has 1 card already (dummy or anything), and the variable `deck_name` matches with the name of the deck, at the end of the script.
-4. Run the script and wait for the cards to be imported into Anki. You should be able to see them appear one by one.
-
-## Requirements
-- Python 3.x
+1. Install [Anki](https://apps.ankiweb.net/)
+2. In Anki, install the plugin [AnkiConnect](https://ankiweb.net/shared/info/2055492159)
+    - To do this you can go to Tools -> Add-ons -> Get Add-ons, and paste the code ``2055492159`` in the box
+3. Restart the Anki program so the plugin is loaded (It's listening on port 8765 by default. That's how the script communicates with Anki)
+4. Create your deck, and put at least 1 card already
+5. Install Python 3.x (any version of Python3 should work)
+    - https://www.python.org/downloads/
+6. Python usually comes with pip, but in case you have problems you can install pip with:
     - `python -m ensurepip --upgrade`
-- `markdown2` and `requests` libraries
+7. Then install the pip packages `markdown2` and `requests` with:
     - `pip install markdown2 requests`
-- Anki installed with [AnkiConnect](https://ankiweb.net/shared/info/2055492159) plugin enabled (listening on port 8765 by default)
-    - Code: ``2055492159``
-- Make sure the deck is created, it has at least 1 card already, and the variable ``deck_name`` matches with the name of the deck, at the end of the script
+    - If you have problems, you can use conda, uv, or virtual environments
+8. Clone the GitHub repository, or just download `main.py`, or copy the contents of `main.py` into a new text file, and name it anything with a `.py` extension
+9. Modify the `deck_name` variable at the end of the script to match the name of the deck you created in Anki
+    - It's probably a good idea to use a simple name without spaces or strange characters
+10. Figure out your source of information. Maybe it's a PDF, some text notes, maybe it's common knowledge to the AI so you don't need anything, maybe it's so incredibly long to the AI that you have to split it in pieces... it depends. Once you have it, save the text in a file called `questions.md` (for example) in the same directory as the script.
+11. Modify the `file_path` variable at the end of the script to match the file with questions. If the Python script (`main.py`) and the file with questions (`questions.md`) are in the same folder, you can just put the name of the file, INCLUDING the extension (`"questions.md"`).
+12. Run the script and wait for the cards to be imported into Anki. You should be able to see them appear one by one.
 
 ### Questions File Format
 The `AnkiCardImporter` script requires that the questions are present in a file called `questions.md`, formatted as follows:
