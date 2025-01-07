@@ -33,8 +33,16 @@ class AnkiMdImporter:
         return response.json()
 
     def extract_questions(self, markdown_content):
-        # Adjust the regex according to your Markdown structure
-        pattern = re.compile(r'- ([\s\S]*?)$\s*\d\.\s(.*?$)\s*\d\.\s(.*?$)\s*\d\.\s(.*?$)\s*\d\.\s(.*?$)\s*- Answer: (.*?)$', re.DOTALL | re.MULTILINE)
+        """
+        Returns a list of tuples containing the question, options and answer.
+        
+        Args:
+            markdown_content (str): The markdown content containing the questions.
+        
+        Returns:
+            list[tuple(str, str, str)]: A list of tuples containing the question, options and answer.
+        """
+        pattern = re.compile(r'(?<=\n)(?:- |\d+\.\s)([\s\S]*?)$\s*((?:\d+\.\s.*?$\s*)+)- Answer: (.*?)$', re.DOTALL | re.MULTILINE)
         return pattern.findall(markdown_content)
 
     def process_file(self):
@@ -44,19 +52,17 @@ class AnkiMdImporter:
         self.process_questions(questions)
 
     def process_questions(self, questions):
-        for q in questions:
-            question_text = q[0]
-            options = q[1:5]
-            explanation = q[5]
-            
+        for question, options_str, answer in questions:
+            options = re.findall(r'\d+\.\s(.*?$)', options_str, re.MULTILINE)
+
             # Create HTML for the front with the question and options as a list
-            front_html = f"<p>{question_text}</p><ol>"
+            front_html = f"<p>{question.strip()}</p><ol>"
             for option in options:
-                front_html += f"<li>{option}</li>"
+                front_html += f"<li>{option.strip()}</li>"
             front_html += "</ol>"
             
             # Convert the explanation to HTML
-            back_html = self.markdown_to_html(explanation)
+            back_html = self.markdown_to_html("Answer: " + answer.strip())
             
             # Add the card to Anki
             self.add_card(front_html, back_html)
@@ -65,7 +71,7 @@ if __name__ == "__main__":
     # Set folder to parent of file and define the deck name
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     file_path = 'questions.md'
-    deck_name = 'my_deck' # Specify your Anki deck name
+    deck_name = 'ALA_FIJA' # Specify your Anki deck name
 
     importer = AnkiMdImporter(file_path, deck_name)
     importer.process_file()
