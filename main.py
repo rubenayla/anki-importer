@@ -2,76 +2,158 @@ import markdown2
 import requests
 import os
 import re
+import yaml
+import argparse
+
+class AnkiConnect:
+    def __init__(self, url="http://localhost:8765"):
+        self.url = url
+
+    def _invoke(self, action, **params):
+        payload = {"action": action, "version": 6, "params": params}
+        try:
+            response = requests.post(self.url, json=payload)
+            response.raise_for_status()
+            result = response.json()
+            if result.get('error') is not None:
+                raise Exception(result['error'])
+            return result.get('result')
+        except requests.exceptions.RequestException as e:
+            raise ConnectionError(f"Could not connect to AnkiConnect at {self.url}. Please ensure Anki is running and AnkiConnect is installed.") from e
+
+    def get_model_names(self):
+        return self._invoke('modelNames')
+
+    def get_model_field_names(self, model_name):
+        return self._invoke('modelFieldNames', modelName=model_name)
+
+    def add_note(self, note):
+        return self._invoke('addNote', note=note)
 
 class AnkiMdImporter:
-    def __init__(self, file_path, deck_name="Default", card_model="Basic"):
-        self.file_path = file_path
-        self.deck_name = deck_name
-        self.card_model = card_model
-        self.url = "http://localhost:8765"
+    def __init__(self, config_path='config.yml'):
+        self.config = self._load_config(config_path)
+        self.anki = AnkiConnect()
 
-    def markdown_to_html(self, markdown_text):
-        return markdown2.markdown(markdown_text)
+    def _load_config(self, config_path):
+        if not os.path.exists(config_path):
+            raise FileNotFoundError(f"Configuration file not found: {config_path}")
+        with open(config_path, 'r', encoding='utf-8') as f:
+            return yaml.safe_load(f)
 
-    def add_card(self, front, back):
-        payload = {
-            "action": "addNote",
-            "version": 6,
-            "params": {
-                "note": {
-                    "deckName": self.deck_name,
-                    "modelName": self.card_model,
-                    "fields": {
-                        "Front": front,
-                        "Back": back
-                    },
-                    "tags": []
-                }
-            }
-        }
-        response = requests.post(self.url, json=payload)
-        return response.json()
-
-    def extract_questions(self, markdown_content):
-        """
-        Returns a list of tuples containing the question, options and answer.
-        
-        Args:
-            markdown_content (str): The markdown content containing the questions.
-        
-        Returns:
-            list[tuple(str, str, str)]: A list of tuples containing the question, options and answer.
-        """
-        pattern = re.compile(r'(?<=\n)(?:- |\d+\.\s)([\s\S]*?)$\s*((?:\d+\.\s.*?$\s*)+)- Answer: (.*?)$', re.DOTALL | re.MULTILINE)
+    @staticmethod
+    def extract_questions(markdown_content):
+        pattern = re.compile(r'(?:^|\n)(?:- |\d+\.\s)([\s\S]*?)\n((?:\s*\d+\.\s.*?\n)+)\s*- Answer: (.*?)(?=\n- |$)', re.DOTALL | re.MULTILINE)
         return pattern.findall(markdown_content)
 
     def process_file(self):
-        with open(self.file_path, 'r', encoding='utf-8') as file:
+        questions_file = self.config['questions_file']
+        if not os.path.exists(questions_file):
+            raise FileNotFoundError(f"Questions file not found: {questions_file}")
+        
+        with open(questions_file, 'r', encoding='utf-8') as file:
             markdown_content = file.read()
-        questions = self.extract_questions(markdown_content)
+        
+        questions = AnkiMdImporter.extract_questions(markdown_content)
         self.process_questions(questions)
 
     def process_questions(self, questions):
-        for question, options_str, answer in questions:
-            options = re.findall(r'\d+\.\s(.*?$)', options_str, re.MULTILINE)
+        field_map = self.config['fields']
+        is_basic_card = not field_map.get('incorrect_answers')
 
-            # Create HTML for the front with the question and options as a list
-            front_html = f"<p>{question.strip()}</p><ol>"
-            for option in options:
-                front_html += f"<li>{option.strip()}</li>"
-            front_html += "</ol>"
+        for question_text, options_str, answer_text in questions:
+            options = re.findall(r'\d+\.\s(.*?)(?:\n|$)', options_str)
+            answer_match = re.match(r'\s*(\d+),?\s*(.*)', answer_text.strip())
+
+            if not answer_match:
+                print(f"Could not parse answer for question: {question_text.strip()}")
+                continue
+
+            correct_index = int(answer_match.group(1)) - 1
+            explanation = answer_match.group(2).strip()
+
+            if not (0 <= correct_index < len(options)):
+                print(f"Invalid correct answer index for question: {question_text.strip()}")
+                continue
+
+            correct_option = options[correct_index]
             
-            # Convert the explanation to HTML
-            back_html = self.markdown_to_html("Answer: " + answer.strip())
-            
-            # Add the card to Anki
-            self.add_card(front_html, back_html)
+            fields = {}
+            if is_basic_card:
+                front_html = f"<p>{question_text.strip()}</p><ol>"
+                for option in options:
+                    front_html += f"<li>{option.strip()}</li>"
+                front_html += "</ol>"
+                
+                back_html = markdown2.markdown(f"{correct_option.strip()}\n\n{explanation}")
+                
+                fields[field_map['question']] = front_html
+                fields[field_map['correct_answer']] = back_html
+            else:
+                incorrect_options = [opt for i, opt in enumerate(options) if i != correct_index]
+                fields[field_map['question']] = question_text.strip()
+                fields[field_map['correct_answer']] = correct_option.strip()
+                
+                if field_map.get('explanation'):
+                    fields[field_map['explanation']] = markdown2.markdown(explanation)
+
+                incorrect_fields = field_map.get('incorrect_answers', [])
+                for i, field_name in enumerate(incorrect_fields):
+                    if i < len(incorrect_options):
+                        fields[field_name] = incorrect_options[i].strip()
+                    else:
+                        fields[field_name] = ""
+
+            note = {
+                "deckName": self.config['deck_name'],
+                "modelName": self.config['card_model'],
+                "fields": fields,
+                "tags": self.config.get('tags', [])
+            }
+
+            try:
+                self.anki.add_note(note)
+                print(f"Card added for question: {question_text.strip()}")
+            except Exception as e:
+                print(f"Error adding card for question: {question_text.strip()}. Error: {e}")
+
+def main():
+    parser = argparse.ArgumentParser(description="Import questions from a Markdown file to Anki.")
+    parser.add_argument('--list-models', action='store_true', help='List available Anki note types (card models).')
+    parser.add_argument('--list-fields', metavar='MODEL_NAME', help='List fields for a specific Anki note type.')
+    parser.add_argument('--config', default='config.yml', help='Path to the configuration file.')
+
+    args = parser.parse_args()
+
+    if args.list_models:
+        try:
+            anki = AnkiConnect()
+            models = anki.get_model_names()
+            print("Available Anki Card Models:")
+            for model in models:
+                print(f"- {model}")
+        except ConnectionError as e:
+            print(e)
+        return
+
+    if args.list_fields:
+        try:
+            anki = AnkiConnect()
+            fields = anki.get_model_field_names(args.list_fields)
+            print(f"Fields for model '{args.list_fields}':")
+            for field in fields:
+                print(f"- {field}")
+        except ConnectionError as e:
+            print(e)
+        except Exception as e:
+            print(f"Error: {e}")
+        return
+
+    try:
+        importer = AnkiMdImporter(args.config)
+        importer.process_file()
+    except (FileNotFoundError, ConnectionError, Exception) as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
-    # Set folder to parent of file and define the deck name
-    os.chdir(os.path.dirname(os.path.realpath(__file__)))
-    file_path = 'questions.md'
-    deck_name = 'ALA_FIJA' # Specify your Anki deck name
-
-    importer = AnkiMdImporter(file_path, deck_name)
-    importer.process_file()
+    main()

@@ -1,0 +1,8 @@
+deck_name: Default
+card_model: Basic
+fields:
+  question: Front
+  correct_answer: Back
+  incorrect_answers: []
+  explanation: ''
+questions_file: questions.md
