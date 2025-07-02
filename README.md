@@ -1,67 +1,114 @@
-# AnkiMdImporter
+# Anki Markdown Importer
 
-## Overview
-The `AnkiMdImporter` is a Python script designed to automatically import questions formatted in Markdown into Anki, a popular flashcard application used for spaced repetition learning. This script parses a Markdown file containing questions and their respective options, converts these questions into Anki cards, and adds them to a specified deck.
+This script imports multiple-choice questions from a Markdown file into Anki, allowing you to use custom note types with shuffling options.
 
-## Steps to use it
-1. Install [Anki](https://apps.ankiweb.net/)
-2. In Anki, install the plugin [AnkiConnect](https://ankiweb.net/shared/info/2055492159)
-    - To do this you can go to Tools -> Add-ons -> Get Add-ons, and paste the code ``2055492159`` in the box
-3. Restart the Anki program so the plugin is loaded (It's listening on port 8765 by default. That's how the script communicates with Anki)
-4. Create your deck, and put at least 1 card already
-    - It's probably a good idea to use a simple name without spaces or strange characters
-5. Install [Python 3.x](https://www.python.org/downloads/) (any version of Python3 should work)
-6. Python usually comes with pip, but in case you have problems you can install pip with:
-    - `python -m ensurepip --upgrade`
-7. Then install the pip packages `markdown2` and `requests` with:
-    - `pip install markdown2 requests`
-    - If you have problems, you can use conda, uv, or virtual environments
-8. Clone the GitHub repository, or just download `main.py`, or copy the contents of `main.py` into a new text file, and name it `main.py` (anything with the `.py` extension)
-9. Modify the `deck_name` variable at the end of the script to match the name of the deck you created in Anki
-10. Figure out your source of information. Maybe it's a PDF, some text notes, maybe it's common knowledge to the AI so you don't need anything, maybe it's so incredibly long to the AI that you have to split it in pieces... it depends. Once you have it, save the text in a file called `questions.md` (for example) in the same directory as the script.
-11. Modify the `file_path` variable at the end of the script to match the file with questions. If the Python script (`main.py`) and the file with questions (`questions.md`) are in the same folder, you can just put the name of the file, INCLUDING the extension (`"questions.md"`).
-12. Run the script and wait for the cards to be imported into Anki. You should be able to see them appear one by one.
+## Features
 
-### Questions File Format
-The `AnkiCardImporter` script requires that the questions are present in a file called `questions.md`, formatted as follows:
-```text
-- What is the capital of France?:
+- Imports questions from a simple Markdown format.
+- Highly configurable via a `config.yml` file.
+- Automatically detects available Anki card models (note types).
+- Lets you inspect the fields of any card model to configure the importer easily.
+- Supports mapping to any custom note type, including those with shuffling options like "MCQ Ultimate V2.1 shuffling default".
+
+## Prerequisites
+
+1.  **Anki**: Make sure Anki is installed on your system.
+2.  **AnkiConnect**: You need to install the [AnkiConnect](https://ankiweb.net/shared/info/2055492159) add-on in Anki. This allows the script to communicate with Anki.
+3.  **Python**: You need Python 3 installed.
+4.  **Python Libraries**: Install the required libraries by running:
+    ```bash
+    pip install requests markdown2 PyYAML
+    ```
+
+## How to Use
+
+### 1. Prepare Your Questions
+
+Create a Markdown file (e.g., `questions.md`) with your questions. Use the following format for each question:
+
+```markdown
+- What is the capital of France?
     1. Berlin
     2. Madrid
     3. Paris
     4. Rome
-    - Answer: 3, because Paris is the capital of France.
+    - Answer: 3, Paris is the capital of France.
+
+- Which planet is known as the Red Planet?
+    1. Earth
+    2. Mars
+    3. Jupiter
+    4. Venus
+    - Answer: 2, Mars is often called the Red Planet due to its reddish appearance.
 ```
 
-Note this:
-- Question text should start with a dash
-- Each option should begin with a number followed by a period
-- The correct answer explanation should start with a dash, followed by the word "Answer:", and the explanation should explain why the answer is correct, in the same line (only one)
+**Important**: Each question must end with an `- Answer:` line, followed by the number of the correct option and an optional explanation.
 
+### 2. Configure the Importer
 
-## Prompt to generate the questions
-```text
-Create multiple-choice test questions with 4 possible answers for me to practice on the attached document. Try to make them difficult, aiming to be tricky like a university exam. After the questions, include explanations with their answers. You can start with 40 questions.
+Configuration is done through the `config.yml` file. This is where you tell the script which Anki deck to use, which card model (note type) to apply, and how to map your data to its fields.
 
-Follow this format, EXACTLY, with the dash to indicate the start of the question, no numbers indicating the different questions. Put everything in a codeblock:
-- Is this thing correct or the other, etc.?:
-    1. blablabla
-    2. blablabla
-    3. blablabla
-    4. blablabla
-    - Answer: Correct answer 1, because blablabla
-- Next question...
+**Step 2.1: Find Your Card Model**
+
+First, make sure Anki is running. Then, run the following command in your terminal to see all the card models you have installed:
+
+```bash
+python main.py --list-models
 ```
-In spanish:
-```text
-Hazme preguntas tipo test con 4 respuestas posibles, para practicar sobre el documento adjunto (en un codeblock, de ahora en adelante todo así). Intenta que sean dificiles, intenta ir a pillar, como en un examen de universidad. Tras las preguntas, pon las explicaciones con sus respuestas. Puedes empezar con 10 preguntas.
 
-Sigue el siguiente formato (en codeblock):
-- Tal cosa es correcta o la otra etc?:
-    1. blablabla
-    2. blablabla
-    3. blablabla
-    4. blablabla
-    - Answer: Respuesta correcta 1, porque blablabla
-- Siguiente pregunta...
+This will output a list of names. Find the one you want to use (e.g., `MCQ Ultimate V2.1 shuffling default`) and copy it.
+
+**Step 2.2: Find the Fields for Your Card Model**
+
+Now, use the name you just copied to find out which fields the card model uses:
+
+```bash
+python main.py --list-fields "MCQ Ultimate V2.1 shuffling default"
 ```
+
+This will show you the exact names of the fields, for example:
+- Question
+- Correct
+- Incorrect1
+- Incorrect2
+- Incorrect3
+- Explanation
+
+**Step 2.3: Edit `config.yml`**
+
+Open the `config.yml` file and fill it out using the information you just gathered.
+
+- `deck_name`: The Anki deck you want to add cards to.
+- `card_model`: The name of the card model you chose.
+- `fields`: This is the most important part. You need to map the script's internal names (`question`, `correct_answer`, etc.) to the actual field names of your card model.
+    - `question`: The field for the question text.
+    - `correct_answer`: The field for the correct option.
+    - `incorrect_answers`: A list of fields for the wrong options.
+    - `explanation`: The field for the answer explanation.
+- `questions_file`: The path to your Markdown file.
+
+Here is an example `config.yml` for the "MCQ Ultimate V2.1 shuffling default" template:
+
+```yaml
+deck_name: My Deck
+card_model: MCQ Ultimate V2.1 shuffling default
+fields:
+  question: Question
+  correct_answer: Correct
+  incorrect_answers:
+    - Incorrect1
+    - Incorrect2
+    - Incorrect3
+  explanation: Explanation
+questions_file: questions.md
+```
+
+### 3. Run the Importer
+
+Once your `config.yml` is set up and Anki is running, simply run the script:
+
+```bash
+python main.py
+```
+
+The script will read your Markdown file, connect to Anki, and create the new cards in the specified deck with the correct card model.
