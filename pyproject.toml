@@ -1,20 +1,28 @@
-[tool.poetry]
+[project]
 name = "anki-importer"
 version = "0.1.0"
 description = "A script to import multiple-choice questions from Markdown to Anki."
-authors = ["Your Name <you@example.com>"]
-license = "Apache-2.0"
+authors = [
+    { name = "Your Name", email = "you@example.com" }
+]
+license = { text = "Apache-2.0" }
 
-[tool.poetry.dependencies]
-python = ">=3.8,<4.0"
-requests = "^2.32.3"
-markdown2 = "^2.5.0"
-pyyaml = "^6.0.1"
+dependencies = [
+    "requests>=2.32.3,<3.0.0",
+    "markdown2>=2.5.0,<3.0.0",
+    "pyyaml>=6.0.1,<7.0.0"
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.4.2"
-pytest-mock = "^3.14.0"
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.2,<8.0.0",
+    "pytest-mock>=3.14.0,<4.0.0"
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+# Poetry-specific configuration can go here if needed, but core metadata is now in [project]
+# For example, if you had specific scripts or plugins for Poetry that aren't part of PEP 621.
