@@ -6,7 +6,7 @@ authors = [
     { name = "Your Name", email = "you@example.com" }
 ]
 license = { text = "Apache-2.0" }
-requires-python = ">=3.8,<4.0" # Added this line for PEP 621 Python compatibility
+requires-python = ">=3.8,<4.0"
 
 dependencies = [
     "requests>=2.32.3,<3.0.0",
@@ -25,5 +25,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-# Poetry-specific configuration can go here if needed, but core metadata is now in [project]
-# For example, if you had specific scripts or plugins for Poetry that aren't part of PEP 621.
+packages = [{ include = "main.py" }] # Tell Poetry to include main.py as part of the project
