@@ -31,9 +31,10 @@ class AnkiConnect:
         return self._invoke('addNote', note=note)
 
 class AnkiMdImporter:
-    def __init__(self, config_path='config.yml'):
+    def __init__(self, config_path='config.yml', deck_name=None):
         self.config = self._load_config(config_path)
         self.anki = AnkiConnect()
+        self.deck_name = deck_name if deck_name else self.config.get('deck_name', 'Default') # Use CLI arg, then config, then default
 
     def _load_config(self, config_path):
         if not os.path.exists(config_path):
@@ -115,7 +116,7 @@ class AnkiMdImporter:
                         fields[field_name] = ""
 
             note = {
-                "deckName": self.config['deck_name'],
+                "deckName": self.deck_name, # Use the deck_name from the instance
                 "modelName": self.config['card_model'],
                 "fields": fields,
                 "tags": self.config.get('tags', [])
@@ -132,6 +133,7 @@ def main():
     parser.add_argument('--list-models', action='store_true', help='List available Anki note types (card models).')
     parser.add_argument('--list-fields', metavar='MODEL_NAME', help='List fields for a specific Anki note type.')
     parser.add_argument('--config', default='config.yml', help='Path to the configuration file.')
+    parser.add_argument('--deck-name', default=None, help='Override the deck name specified in the config file.')
 
     args = parser.parse_args()
 
@@ -160,7 +162,7 @@ def main():
         return
 
     try:
-        importer = AnkiMdImporter(args.config)
+        importer = AnkiMdImporter(args.config, args.deck_name)
         importer.process_file()
     except (FileNotFoundError, ConnectionError, Exception) as e:
         print(f"Error: {e}")

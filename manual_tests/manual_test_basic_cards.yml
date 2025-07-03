@@ -1,4 +1,3 @@
-deck_name: Default
 card_model: Basic
 fields:
   question: Front

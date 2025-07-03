@@ -1,4 +1,6 @@
-deck_name: Default
+# This is the default configuration for importing questions as basic Anki cards (Front/Back).
+# If you want to use a custom multiple-choice card model, please refer to the README.md for instructions.
+
 card_model: Basic
 fields:
   question: Front

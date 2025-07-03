@@ -1,0 +1,13 @@
+# Configuration for the 'MCQ Ultimate V2.1 shuffling default' Anki card model.
+# Use this file with: poetry run python main.py --config configs/mcq_ultimate_v2.yml
+
+card_model: MCQ Ultimate V2.1 shuffling default
+fields:
+  question: Question
+  correct_answer: Correct
+  incorrect_answers:
+    - Incorrect1
+    - Incorrect2
+    - Incorrect3
+  explanation: Explanation
+questions_file: questions.md
