@@ -5,7 +5,7 @@ This script imports multiple-choice questions from a Markdown file into Anki, al
 ## Features
 
 - Imports questions from a simple Markdown format.
-- Highly configurable via a `config.yml` file.
+- Highly configurable via `config.yml` files.
 - Automatically detects available Anki card models (note types).
 - Lets you inspect the fields of any card model to configure the importer easily.
 - Supports mapping to any custom note type, including those with shuffling options like "MCQ Ultimate V2.1 shuffling default".
@@ -50,9 +50,9 @@ This Markdown format is specifically designed for multiple-choice questions. Her
     *   `N` (the number) indicates the **correct option** among the numbered lines.
     *   `[Explanation]` (the text after the comma) is the **Explanation** for the answer.
 
-This information is then mapped to the fields of your chosen Anki card model, as configured in `config.yml`.
+This information is then mapped to the fields of your chosen Anki card model, as configured in your selected `config.yml`.
 
-**Note on Basic Card Types:** If you configure a basic card model (e.g., 'Basic') in `config.yml` (by setting `card_model: Basic` and `incorrect_answers: []`), the script will automatically combine the question and options into the 'Front' field, and the correct answer along with the explanation into the 'Back' field.
+**Note on Basic Card Types:** If you configure a basic card model (e.g., 'Basic') in your `config.yml` (by setting `card_model: Basic` and `incorrect_answers: []`), the script will automatically combine the question and options into the 'Front' field, and the correct answer along with the explanation into the 'Back' field.
 
 ### 2. Installation
 
@@ -96,15 +96,17 @@ If you prefer to install dependencies manually, follow these steps:
 
 ### 3. Configure the Importer
 
-**For Basic Anki Cards (Default Configuration):**
+Configuration is done through YAML files. The project provides a default `config.yml` for basic cards and a `configs/` directory with presets for more complex card types.
 
-The `config.yml` file is pre-configured to import questions as basic Anki cards (Front/Back). If you intend to use basic cards, you can proceed directly to [Step 4. Run the Importer](#4-run-the-importer) after preparing your questions and installing the dependencies. No changes to `config.yml` are needed.
+**Default Configuration (for Basic Anki Cards):**
 
-**For Custom Multiple-Choice Anki Cards:**
+The `config.yml` file in the root directory is pre-configured to import questions as basic Anki cards (Front/Back). If you intend to use basic cards, you can proceed directly to [Step 4. Run the Importer](#4-run-the-importer) after preparing your questions and installing the dependencies. No changes to `config.yml` are needed.
 
-If you want to use a custom multiple-choice Anki card model (like "MCQ Ultimate V2.1 shuffling default"), you will need to modify `config.yml` to map the Markdown content to the specific fields of your chosen card model. Follow these steps:
+**Using Presets or Custom Configurations:**
 
-**Step 3.1: Find Your Card Model**
+If you want to use a custom multiple-choice Anki card model (like "MCQ Ultimate V2.1 shuffling default") or any other specific setup, you can use one of the provided presets or create your own. Presets are located in the `configs/` directory.
+
+**Step 3.1: Find Your Card Model (if using a custom model)**
 
 First, make sure Anki is running. Then, run the following command in your terminal to see all the card models you have installed:
 
@@ -114,7 +116,7 @@ poetry run python main.py --list-models
 
 This will output a list of names. Find the one you want to use (e.g., `MCQ Ultimate V2.1 shuffling default`) and copy it.
 
-**Step 3.2: Find the Fields for Your Card Model**
+**Step 3.2: Find the Fields for Your Card Model (if using a custom model)**
 
 Now, use the name you just copied to find out which fields the card model uses:
 
@@ -130,23 +132,16 @@ This will show you the exact names of the fields, for example:
 - Incorrect3
 - Explanation
 
-**Step 3.3: Edit `config.yml`**
+**Step 3.3: Select or Edit Your Configuration File**
 
-Open the `config.yml` file and fill it out using the information you just gathered.
+*   **To use a preset:** Choose a file from the `configs/` directory (e.g., `configs/mcq_ultimate_v2.yml`). You can use it directly or copy it to your project root and modify it.
+*   **To create a custom configuration:** You can start by copying an existing preset or the default `config.yml` and modifying it to suit your needs.
 
-- `deck_name`: The Anki deck you want to add cards to.
-- `card_model`: The name of the card model you chose.
-- `fields`: This is the most important part. You need to map the script's internal names (`question`, `correct_answer`, etc.) to the actual field names of your card model.
-    - `question`: The field for the question text.
-    - `correct_answer`: The field for the correct option.
-    - `incorrect_answers`: A list of fields for the wrong options.
-    - `explanation`: The field for the answer explanation.
-- `questions_file`: The path to your Markdown file.
+Your configuration file (whether `config.yml` or a preset) will define the `card_model`, `fields` mapping, and `questions_file`.
 
-Here is an example `config.yml` for the "MCQ Ultimate V2.1 shuffling default" template:
+Here is an example `configs/mcq_ultimate_v2.yml` for the "MCQ Ultimate V2.1 shuffling default" template:
 
 ```yaml
-deck_name: My Deck
 card_model: MCQ Ultimate V2.1 shuffling default
 fields:
   question: Question
@@ -161,10 +156,13 @@ questions_file: questions.md
 
 ### 4. Run the Importer
 
-Once your `config.yml` is set up and Anki is running, simply run the script:
+Once your configuration file is ready and Anki is running, run the script. You can specify the configuration file and the target Anki deck:
 
 ```bash
-poetry run python main.py
+poetry run python main.py --config config.yml --deck-name "My Custom Deck"
 ```
+
+*   Use `--config config.yml` to use the default configuration, or `--config configs/your_preset.yml` to use a preset.
+*   Use `--deck-name "Your Anki Deck"` to specify the target deck. If omitted, cards will be added to the "Default" deck in Anki.
 
 The script will read your Markdown file, connect to Anki, and create the new cards in the specified deck with the correct card model.
