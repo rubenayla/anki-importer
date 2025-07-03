@@ -12,9 +12,9 @@ This script imports multiple-choice questions from a Markdown file into Anki, al
 
 ## Prerequisites
 
-1.  **Anki**: Make sure Anki is installed on your system.
-2.  **AnkiConnect**: You need to install the [AnkiConnect](https://ankiweb.net/shared/info/2055492159) add-on in Anki. This allows the script to communicate with Anki.
-3.  **Python**: You need Python 3 installed.
+1.  **[Anki](https://apps.ankiweb.net/)**: Make sure Anki is installed on your system.
+2.  **[AnkiConnect](https://ankiweb.net/shared/info/2055492159)**: You need to install the AnkiConnect add-on in Anki. This allows the script to communicate with Anki.
+3.  **[Python](https://www.python.org/downloads/)**: You need Python 3 installed.
 
 ## How to Use
 
@@ -42,7 +42,11 @@ Create a Markdown file (e.g., `questions.md`) with your questions. Use the follo
 
 ### 2. Installation
 
-To get started, simply run the appropriate installation script for your operating system. This will install Poetry (if you don't have it) and all project dependencies.
+Choose your preferred method to install the project dependencies:
+
+#### Automated Installation (Recommended)
+
+To get started quickly, simply run the appropriate installation script for your operating system. This will install Poetry (if you don't have it) and all project dependencies.
 
 **Linux / macOS:**
 
@@ -55,6 +59,26 @@ bash install.sh
 ```powershell
 .\install.ps1
 ```
+
+#### Manual Installation
+
+If you prefer to install dependencies manually, follow these steps:
+
+1.  **Install Poetry**: If you don't have Poetry installed, follow the official instructions:
+    *   **Linux / macOS / Windows (WSL):**
+        ```bash
+        curl -sSL https://install.python-poetry.org | python3 -
+        ```
+    *   **Windows (PowerShell):**
+        ```powershell
+        (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+        ```
+    *   For other installation methods or troubleshooting, refer to the [Poetry documentation](https://python-poetry.org/docs/#installation).
+
+2.  **Install Project Dependencies**: Navigate to the project root directory in your terminal and run:
+    ```bash
+    poetry install
+    ```
 
 ### 3. Configure the Importer
 
