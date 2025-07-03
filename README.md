@@ -40,6 +40,16 @@ Create a Markdown file (e.g., `questions.md`) with your questions. Use the follo
 
 **Important**: Each question must end with an `- Answer:` line, followed by the number of the correct option and an optional explanation.
 
+**How the Markdown is interpreted:**
+
+*   The line starting with `-` or `N.` (e.g., `- What is...` or `1. What is...`) is extracted as the **Question** text.
+*   The numbered lines (e.g., `1. Berlin`, `2. Madrid`) are treated as the **Options**.
+*   The `- Answer: N, [Explanation]` line is crucial:
+    *   `N` (the number) indicates the **correct option** among the numbered lines.
+    *   `[Explanation]` (the text after the comma) is the **Explanation** for the answer.
+
+This information is then mapped to the fields of your chosen Anki card model (e.g., `Question`, `Correct`, `Incorrect1`, `Explanation`), as configured in `config.yml`.
+
 ### 2. Installation
 
 Choose your preferred method to install the project dependencies:
