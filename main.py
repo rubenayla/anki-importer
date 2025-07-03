@@ -43,7 +43,15 @@ class AnkiMdImporter:
 
     @staticmethod
     def extract_questions(markdown_content):
-        pattern = re.compile(r'(?:^|\n)(?:- |\d+\.\s)([\s\S]*?)\n((?:\s*\d+\.\s.*?\n)+)\s*- Answer: (.*?)(?=\n- |$)', re.DOTALL | re.MULTILINE)
+        # Refined regex to capture full question blocks more reliably.
+        # It explicitly looks for a question line, followed by options, and then the mandatory answer line.
+        # Using [^\n]* instead of .*? with re.DOTALL to avoid greedy matching issues across lines.
+        pattern = re.compile(
+            r'^(?:- |\d+\.\s)([^\n]*)\n'  # Question line (group 1) - matches until newline
+            r'((?:^\s*\d+\.\s[^\n]*\n)+?)'     # Options (non-greedy, group 2) - matches lines starting with spaces and numbers
+            r'^\s*- Answer: ([^\n]*)(?:$|\n)', # Answer line (group 3) - matches the answer line
+            re.MULTILINE
+        )
         return pattern.findall(markdown_content)
 
     def process_file(self):
@@ -85,6 +93,8 @@ class AnkiMdImporter:
                     front_html += f"<li>{option.strip()}</li>"
                 front_html += "</ol>"
                 
+                # For basic cards, combine correct answer and explanation in the back field
+                # markdown2.markdown will convert this to HTML, typically wrapping in <p> tags
                 back_html = markdown2.markdown(f"{correct_option.strip()}\n\n{explanation}")
                 
                 fields[field_map['question']] = front_html
@@ -129,11 +139,11 @@ def main():
         try:
             anki = AnkiConnect()
             models = anki.get_model_names()
-            print("Available Anki Card Models:")
+            print(f"Available Anki Card Models:")
             for model in models:
                 print(f"- {model}")
         except ConnectionError as e:
-            print(e)
+            print(f"{e}") # Print only the error message, not the "Error: " prefix
         return
 
     if args.list_fields:
@@ -144,7 +154,7 @@ def main():
             for field in fields:
                 print(f"- {field}")
         except ConnectionError as e:
-            print(e)
+            print(f"{e}") # Print only the error message, not the "Error: " prefix
         except Exception as e:
             print(f"Error: {e}")
         return

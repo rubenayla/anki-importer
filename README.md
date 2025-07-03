@@ -15,10 +15,6 @@ This script imports multiple-choice questions from a Markdown file into Anki, al
 1.  **Anki**: Make sure Anki is installed on your system.
 2.  **AnkiConnect**: You need to install the [AnkiConnect](https://ankiweb.net/shared/info/2055492159) add-on in Anki. This allows the script to communicate with Anki.
 3.  **Python**: You need Python 3 installed.
-4.  **Python Libraries**: Install the required libraries by running:
-    ```bash
-    pip install requests markdown2 PyYAML
-    ```
 
 ## How to Use
 
@@ -44,26 +40,42 @@ Create a Markdown file (e.g., `questions.md`) with your questions. Use the follo
 
 **Important**: Each question must end with an `- Answer:` line, followed by the number of the correct option and an optional explanation.
 
-### 2. Configure the Importer
+### 2. Installation
+
+To get started, simply run the appropriate installation script for your operating system. This will install Poetry (if you don't have it) and all project dependencies.
+
+**Linux / macOS:**
+
+```bash
+bash install.sh
+```
+
+**Windows (PowerShell):**
+
+```powershell
+.\install.ps1
+```
+
+### 3. Configure the Importer
 
 Configuration is done through the `config.yml` file. This is where you tell the script which Anki deck to use, which card model (note type) to apply, and how to map your data to its fields.
 
-**Step 2.1: Find Your Card Model**
+**Step 3.1: Find Your Card Model**
 
 First, make sure Anki is running. Then, run the following command in your terminal to see all the card models you have installed:
 
 ```bash
-python main.py --list-models
+poetry run python main.py --list-models
 ```
 
 This will output a list of names. Find the one you want to use (e.g., `MCQ Ultimate V2.1 shuffling default`) and copy it.
 
-**Step 2.2: Find the Fields for Your Card Model**
+**Step 3.2: Find the Fields for Your Card Model**
 
 Now, use the name you just copied to find out which fields the card model uses:
 
 ```bash
-python main.py --list-fields "MCQ Ultimate V2.1 shuffling default"
+poetry run python main.py --list-fields "MCQ Ultimate V2.1 shuffling default"
 ```
 
 This will show you the exact names of the fields, for example:
@@ -74,7 +86,7 @@ This will show you the exact names of the fields, for example:
 - Incorrect3
 - Explanation
 
-**Step 2.3: Edit `config.yml`**
+**Step 3.3: Edit `config.yml`**
 
 Open the `config.yml` file and fill it out using the information you just gathered.
 
@@ -103,12 +115,12 @@ fields:
 questions_file: questions.md
 ```
 
-### 3. Run the Importer
+### 4. Run the Importer
 
 Once your `config.yml` is set up and Anki is running, simply run the script:
 
 ```bash
-python main.py
+poetry run python main.py
 ```
 
 The script will read your Markdown file, connect to Anki, and create the new cards in the specified deck with the correct card model.
