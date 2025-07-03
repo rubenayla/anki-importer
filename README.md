@@ -96,7 +96,13 @@ If you prefer to install dependencies manually, follow these steps:
 
 ### 3. Configure the Importer
 
-Configuration is done through the `config.yml` file. This is where you tell the script which Anki deck to use, which card model (note type) to apply, and how to map your data to its fields.
+**For Basic Anki Cards (Default Configuration):**
+
+The `config.yml` file is pre-configured to import questions as basic Anki cards (Front/Back). If you intend to use basic cards, you can proceed directly to [Step 4. Run the Importer](#4-run-the-importer) after preparing your questions and installing the dependencies. No changes to `config.yml` are needed.
+
+**For Custom Multiple-Choice Anki Cards:**
+
+If you want to use a custom multiple-choice Anki card model (like "MCQ Ultimate V2.1 shuffling default"), you will need to modify `config.yml` to map the Markdown content to the specific fields of your chosen card model. Follow these steps:
 
 **Step 3.1: Find Your Card Model**
 
