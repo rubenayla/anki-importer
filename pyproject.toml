@@ -6,6 +6,7 @@ authors = [
     { name = "Your Name", email = "you@example.com" }
 ]
 license = { text = "Apache-2.0" }
+requires-python = ">=3.8,<4.0" # Added this line for PEP 621 Python compatibility
 
 dependencies = [
     "requests>=2.32.3,<3.0.0",
