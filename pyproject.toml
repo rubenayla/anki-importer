@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "anki-importer"
+version = "0.1.0"
+description = "A script to import multiple-choice questions from Markdown to Anki."
+authors = ["Your Name <you@example.com>"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+requests = "^2.32.3"
+markdown2 = "^2.5.0"
+pyyaml = "^6.0.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
+pytest-mock = "^3.14.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
