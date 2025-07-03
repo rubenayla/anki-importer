@@ -15,6 +15,7 @@ This script imports multiple-choice questions from a Markdown file into Anki, al
 1.  **[Anki](https://apps.ankiweb.net/)**: Make sure Anki is installed on your system.
 2.  **[AnkiConnect](https://ankiweb.net/shared/info/2055492159)**: You need to install the AnkiConnect add-on in Anki. This allows the script to communicate with Anki.
 3.  **[Python](https://www.python.org/downloads/)**: You need Python 3 installed.
+4.  **Project Dependencies**: Managed via `pyproject.toml` and Poetry.
 
 ## How to Use
 
